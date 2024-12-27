@@ -1,18 +1,22 @@
+import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../config";
 import { getDownloadURL, ref, uploadBytes, storage } from "../firebase";
 import React, { useState } from "react";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
-    rollNumber: "",
+    pinno: "",
     year: "",
     department: "",
     photo: null,
     name: "",
-    email: "",
-    mobile: "",
+    emailid: "",
+    studentmobile: "",
     address: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -34,15 +38,32 @@ const Registration = () => {
     }
   };
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    // Handle form submission, like sending data to an API or saving in state
+    //hit this api "/register/students" with formData
+    const response = await fetch(`${BASE_URL}/register/students`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      //alert the message coming in response
+      alert(data.message || "Registration successful!");
+      navigate("/login", { state: { role: "student" } });
+    } else {
+      console.error("Registration failed!");
+      alert(data.message || "Registration failed!");
+    }
   };
 
   return (
@@ -62,8 +83,8 @@ const Registration = () => {
             <input
               type="text"
               id="rollNumber"
-              name="rollNumber"
-              value={formData.rollNumber}
+              name="pinno"
+              value={formData.pinno}
               onChange={handleChange}
               className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
               required
@@ -164,8 +185,8 @@ const Registration = () => {
             <input
               type="email"
               id="email"
-              name="email"
-              value={formData.email}
+              name="emailid"
+              value={formData.emailid}
               onChange={handleChange}
               className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
               required
@@ -183,8 +204,8 @@ const Registration = () => {
             <input
               type="tel"
               id="mobile"
-              name="mobile"
-              value={formData.mobile}
+              name="studentmobile"
+              value={formData.studentmobile}
               onChange={handleChange}
               className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
               required
