@@ -1,245 +1,245 @@
-import { useEffect, useRef, useState } from "react";
-import logo from "../assets/logo.jpeg";
-import { useStores } from "../store/index";
-import { useNavigate } from "react-router-dom";
-import { AiOutlineLeft } from "react-icons/ai";
-export default function Register() {
-  const { CommonStore, UserStore } = useStores();
-  const [showSetPassword, setShowSetPassword] = useState(false);
-  const [name, setName] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [phone, setPhone] = useState(null);
-  const [pin, setPin] = useState(null);
-  const [branch, setBranch] = useState(null);
-  const [year, setYear] = useState(null);
-  const nameref = useRef(null);
-  const emailref = useRef(null);
-  const phoneref = useRef(null);
-  const passref = useRef(null);
-  const cpassref = useRef(null);
-  const pinref = useRef(null);
-  const branchref = useRef(null);
-  const yearref = useRef(null);
-  const navigate = useNavigate();
+import { getDownloadURL, ref, uploadBytes, storage } from "../firebase";
+import React, { useState } from "react";
 
-  const goToSetPassword = (e) => {
-    e.preventDefault();
-    try {
-      setName(nameref.current.value);
-      setEmail(emailref.current.value);
-      setPhone(phoneref.current.value);
-      setPin(pinref.current.value);
-      setBranch(branchref.current.value);
-      if (CommonStore.role === "student") {
-        setYear(yearref.current.value);
+const Registration = () => {
+  const [formData, setFormData] = useState({
+    rollNumber: "",
+    year: "",
+    department: "",
+    photo: null,
+    name: "",
+    email: "",
+    mobile: "",
+    address: "",
+    password: "",
+  });
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const storageRef = ref(
+        storage,
+        `attendance-management/images/${file.name}`
+      );
+      console.log("Uploading file...", file.name);
+      try {
+        const snapshot = await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(snapshot.ref);
+        setFormData((prev) => ({ ...prev, photo: url }));
+        console.log("File uploaded successfully! Image URL: ", url);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      } finally {
       }
-      setShowSetPassword(true);
-    } catch (error) { }
+    }
   };
 
-  const postDetails = async (e) => {
-    e.preventDefault();
-    try {
-      console.log(name, email, phone, branch, pin, CommonStore.role);
-      const password = passref.current.value;
-      const confirmpassword = cpassref.current.value;
-      if (password !== confirmpassword) {
-        alert("Password and Confirm Password are not same");
-        return;
-      } else {
-        if (CommonStore.role === "hod" || CommonStore.role === "staff") {
-           await  UserStore.signUpLecturer(
-              name,
-              pin,
-              email,
-              branch,
-              password,
-              CommonStore.role,
-              phone
-            )
-            return navigate("/login");
-        } else {
-            await UserStore.signUpStudent(
-              name,
-              pin,
-              email,
-              branch,
-              password,
-              CommonStore.role,
-              phone,
-              year
-            )
-            return navigate("/login");
-        }
-      }
-    } catch (error) { }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
-  const back = () => {
-    navigate("/login");
-  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+    // Handle form submission, like sending data to an API or saving in state
+  };
 
   return (
-    <>
-      <div className="flex flex-col  relative w-[100%] h-screen items-center">
-        <div className="flex mt-2">
-          <button
-            className="flex items-center left-4 top-4 absolute text-lg"
-            onClick={back}
-          >
-            <AiOutlineLeft className="mr-1" /> Back
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-50">
+      <h2 className=" mt-[5%] w-full bg-red-400 text-white text-center py-6 text-4xl font-bold">
+        Register Your Account
+      </h2>
 
-          </button>
-          {/* <div
-            className={`h-[30%] ${showSetPassword ? "mt-[20%]" : "mt-[2%]"
-              } md:mt-[2%]`}
-          >
-            <img src={logo} className="w-40 h-40" alt="" />
-          </div> */}
-        </div>
-
-        {!showSetPassword ? (
-          <div className="bg-primary h-[90%] py-6 px-5 flex flex-col rounded-3xl  w-[50%]  mt-[3%]  items-center justify-center">
-            <h1 className="text-3xl text-center py-2 text-white">
-              Enter Details To Register
-            </h1>
-
-            <div className="flex flex-wrap w-[95%] items-center   justify-center">
-              <form
-                onSubmit={goToSetPassword}
-                className="flex w-[90%] flex-col justify-between "
-              >
-                <p className="text-white mt-3 ml-3">Name</p>
-                <input
-                  ref={nameref}
-                  required
-                  className="px-5 w-[100%] py-4 rounded-full "
-                  type="text"
-                />
-                <p className="text-white mt-3 ml-3">Email</p>
-                <input
-                  ref={emailref}
-                  required
-                  className="px-5 w-[100%] py-4 rounded-full "
-                  type="email"
-                />
-
-                <p className="text-white mt-3 ml-3">Phone Number</p>
-                <input
-                  ref={phoneref}
-                  required
-                  className="px-5 w-[100%] py-4 rounded-full"
-                  type="text"
-                />
-                {/* <link rel="stylesheet" href="" /> */}
-                {/* <p className="text-white mt-3 ml-3">
-                  {CommonStore.role === "student" ? "Pin Number" : "Staff I'd"}
-                </p>
-                <input
-                  ref={pinref}
-                  required
-                  className="px-5 w-[100%] py-4 rounded-full "
-                  type="text"
-                /> */}
-
-                <p className="text-white mt-3 ml-3">Upload Photo</p>
-                <input
-                  ref={pinref}
-                  required
-                  className="px-5 w-[100%] py-4 rounded-full "
-                  type="file"
-                />
-
-                {CommonStore.role === "student" &&
-                  <>
-                    <p className="text-white mt-3 ml-3">Year</p>
-                    <select
-                      ref={yearref}
-                      type="text"
-                      className="px-5 w-[100%] py-4 rounded-full  "
-                    >
-                      <option className="text-xs" value="1st Year">
-                        1
-                      </option>
-                      <option className="text-xs" value="2nd Year">
-                        2
-                      </option>
-                      <option className="text-xs" value="3rd Year">
-                        3
-                      </option>
-                    </select>
-                  </>
-                }
-
-                {/* <p className="text-white mt-4 ml-3">Password</p>
-              <input
-                required
-                ref={passref}
-                className="px-5 w-[100%] py-4 rounded-full "
-                type="password"
-              />
-
-              <p className="text-white mt-4 ml-3">Conform Password</p>
-              <input
-                required
-                ref={cpassref}
-                className="px-5 w-[100%] py-4 rounded-full "
-                type="password"
-              /> */}
-
-                {/* <p className='text-white ml-auto mr-3 mt-3 mb-2'>Forgot Password ?</p> */}
-                <button
-                  type="submit"
-                  className="w-[100%] py-4 rounded-full text-white border-[1px] mt-8 border-white"
-                >
-                  Next
-                </button>
-              </form>
-            </div>
+      <div className="p-8 w-full max-w-[40%]">
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="rollNumber"
+              className="block text-gray-700 font-medium mb-1">
+              Roll Number
+            </label>
+            <input
+              type="text"
+              id="rollNumber"
+              name="rollNumber"
+              value={formData.rollNumber}
+              onChange={handleChange}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
+              required
+              placeholder="Enter your roll number"
+            />
           </div>
-        ) : (
-          <>
-            <h1 className="mt-[8%] text-3xl">Set New Password</h1>
-            <div className="bg-primary h-[100%] flex px-6  w-[100%] rounded-tl-[100px] mt-[10%]  items-center justify-center">
-              <form
-                onSubmit={postDetails}
-                className="flex flex-col w-[95%] items-center"
-              >
-                <p className="w-full text-white mt-4 ml-3">New Password</p>
-                <input
-                  required
-                  ref={passref}
-                  className="px-5 w-[100%] py-4 rounded-full "
-                  type="password"
-                />
 
-                <p className="text-white w-full mt-6 ml-3">
-                  Confirm New Password
-                </p>
-                <input
-                  required
-                  ref={cpassref}
-                  className="px-5 w-[100%] py-4 rounded-full "
-                  type="password"
-                />
-                <button
-                  type="submit"
-                  className="w-[50%] py-4 rounded-full text-white border-[1px] mt-10 border-white"
-                >
-                  Register
-                </button>
-              </form>
-            </div>
-          </>
-        )}
+          {/* Select Year */}
+          <div className="mb-4">
+            <label
+              htmlFor="year"
+              className="block text-gray-700 font-medium mb-1">
+              Select Year
+            </label>
+            <select
+              id="year"
+              name="year"
+              value={formData.year}
+              onChange={handleChange}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
+              required>
+              <option value="">Select Year</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
+            </select>
+          </div>
+
+          {/* Select Department */}
+          <div className="mb-4">
+            <label
+              htmlFor="department"
+              className="block text-gray-700 font-medium mb-1">
+              Select Department
+            </label>
+            <select
+              id="department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
+              required>
+              <option value="">Select Department</option>
+              <option value="ECE">
+                Electronics and Communication Engineering
+              </option>
+              <option value="CSE">Computer Science Engineering</option>
+              <option value="IT">Information Technology</option>
+              <option value="ME">Mechanical Engineering</option>
+            </select>
+          </div>
+
+          {/* Photo */}
+          <div className="mb-4">
+            <label
+              htmlFor="photo"
+              className="block text-gray-700 font-medium mb-1">
+              Upload Photo
+            </label>
+            <input
+              type="file"
+              id="photo"
+              name="photo"
+              onChange={handleImageUpload}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2"
+              accept="image/*"
+              required
+            />
+          </div>
+
+          {/* Name */}
+          <div className="mb-4">
+            <label
+              htmlFor="name"
+              className="block text-gray-700 font-medium mb-1">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
+              required
+              placeholder="Enter your name"
+            />
+          </div>
+
+          {/* Email */}
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="block text-gray-700 font-medium mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
+              required
+              placeholder="Enter your email"
+            />
+          </div>
+
+          {/* Mobile Number */}
+          <div className="mb-4">
+            <label
+              htmlFor="mobile"
+              className="block text-gray-700 font-medium mb-1">
+              Mobile Number
+            </label>
+            <input
+              type="tel"
+              id="mobile"
+              name="mobile"
+              value={formData.mobile}
+              onChange={handleChange}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
+              required
+              placeholder="Enter your mobile number"
+            />
+          </div>
+
+          {/* Address */}
+          <div className="mb-4">
+            <label
+              htmlFor="address"
+              className="block text-gray-700 font-medium mb-1">
+              Address
+            </label>
+            <textarea
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
+              rows="4"
+              required
+              placeholder="Enter your address"
+            />
+          </div>
+
+          {/* Password */}
+          <div className="mb-6">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 font-medium mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-red-500 text-white text-lg font-semibold py-2 rounded-lg hover:bg-red-600 transition-all">
+            Register
+          </button>
+        </form>
       </div>
-    </>
+    </div>
   );
-}
+};
 
-// export function SetPasswordFields() {
-//   const passref = useRef(null);
-//   const cpassref = useRef(null);
-//   return (
-
-//   );
-// }
+export default Registration;

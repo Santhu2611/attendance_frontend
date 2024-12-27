@@ -1,17 +1,23 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that y
-import { getStorage } from "firebase/storage";
+import { getAnalytics } from "firebase/analytics";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; 
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCN-j--c24WDwOj7E-BPlq7KnYBSKQEYkg",
-  authDomain: "college-management-19336.firebaseapp.com",
-  projectId: "college-management-19336",
-  storageBucket: "college-management-19336.appspot.com",
-  messagingSenderId: "793585418128",
-  appId: "1:793585418128:web:97cac6ff6593e3a7c7bd15"
+  apiKey: "AIzaSyDHGlnWFxmiMqOuYFwWvusuQ_vLP2kGe7w",
+  authDomain: "blog-management-system-718dc.firebaseapp.com",
+  projectId: "blog-management-system-718dc",
+  storageBucket: "blog-management-system-718dc.appspot.com",
+  messagingSenderId: "929325236702",
+  appId: "1:929325236702:web:266756e71a3b65739a9d4f",
+  measurementId: "G-SR449Y4N0L"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const storage = getStorage(app);
+const analytics = getAnalytics(app);
+
+// Initialize Firebase Storage
+const storage = getStorage(app);
+
+export { storage, ref, uploadBytes, getDownloadURL };

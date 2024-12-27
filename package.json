@@ -6,6 +6,8 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "certificate_management": "file:",
+    "face-api.js": "^0.22.2",
     "firebase": "^10.5.2",
     "mobx": "^6.10.2",
     "mobx-react": "^9.0.1",
@@ -15,6 +17,7 @@
     "react-router-dom": "^6.16.0",
     "react-scripts": "5.0.1",
     "react-swipe": "^6.0.4",
+    "react-webcam": "^7.2.0",
     "swipe-js-iso": "^2.1.5",
     "web-vitals": "^2.1.4"
   },
