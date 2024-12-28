@@ -16,8 +16,10 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = role === "staff" ? `${BASE_URL}/hod/login` : `${BASE_URL}/students/login`;
-    const data = role === "staff" ? { email: name, password } : { pinno: name, password };
+    const url =
+      role === "staff" ? `${BASE_URL}/hod/login` : `${BASE_URL}/students/login`;
+    const data =
+      role === "staff" ? { email: name, password } : { pinno: name, password };
 
     try {
       const response = await fetch(url, {
@@ -35,18 +37,17 @@ const Login = () => {
       }
 
       // Set role in context and navigate to home
-      
-      
-      if(role === "staff"){
+
+      if (role === "staff") {
         setUserRole(role);
         navigate("/");
-
-      }else{
-        if(result.student.isVerified){
+      } else {
+        if (result.student.isVerified) {
+          localStorage.setItem("id", result.student._id);
           setUserRole(role);
           alert(result.message);
           navigate("/");
-        }else{
+        } else {
           alert("Please wait for the staff to verify your account");
         }
       }
@@ -71,14 +72,18 @@ const Login = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="name" className="block text-gray-700 font-medium mb-1">
+            <label
+              htmlFor="name"
+              className="block text-gray-700 font-medium mb-1">
               {role === "staff" ? "Email" : "Roll Number"}
             </label>
             <input
               id="name"
               type="text"
               required
-              placeholder={`Enter your ${role === "staff" ? "email" : "roll number"}`}
+              placeholder={`Enter your ${
+                role === "staff" ? "email" : "roll number"
+              }`}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
@@ -86,7 +91,9 @@ const Login = () => {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="password" className="block text-gray-700 font-medium mb-1">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 font-medium mb-1">
               Password
             </label>
             <input
@@ -100,7 +107,9 @@ const Login = () => {
             />
           </div>
 
-          <button type="submit" className="w-full bg-red-500 text-white text-lg font-semibold py-2 rounded-lg hover:bg-red-600 transition-all">
+          <button
+            type="submit"
+            className="w-full bg-red-500 text-white text-lg font-semibold py-2 rounded-lg hover:bg-red-600 transition-all">
             Submit
           </button>
         </form>
