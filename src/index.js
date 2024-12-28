@@ -13,6 +13,9 @@ import StudentActivations from "./components/staff/studApproval";
 import StudentDetails from "./components/staff/studDetails";
 import CheckAttendance from "./components/staff/checkAttendance";
 import StudentIDCard from "./components/student/idCard";
+import ProtectedRoute from "./protectedRoute";
+import StudentAttendanceLogs from "./components/student/attendanceLogs";
+import StaffAttendanceLogs from "./components/staff/staffAttendLogs";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -25,19 +28,68 @@ root.render(
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Registration />} />
-          <Route path="/scan" element={<FaceComparison />} />
-          <Route path="/students-approval" element={<StudentActivations />} />
-          <Route path="/students-details" element={<StudentDetails />} />
-          <Route path="/check-attendance" element={<CheckAttendance />} />
-          <Route path="/download-id-card" element={<StudentIDCard />} />
+
+          {/* Protected routes */}
+          <Route
+            path="/scan"
+            element={
+              <ProtectedRoute>
+                <FaceComparison />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/students-approval"
+            element={
+              <ProtectedRoute>
+                <StudentActivations />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/students-details"
+            element={
+              <ProtectedRoute>
+                <StudentDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/check-attendance"
+            element={
+              <ProtectedRoute>
+                <CheckAttendance />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/download-id-card"
+            element={
+              <ProtectedRoute>
+                <StudentIDCard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student-attendance-logs"
+            element={
+              <ProtectedRoute>
+                <StudentAttendanceLogs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff-attendance-logs"
+            element={
+              <ProtectedRoute>
+                <StaffAttendanceLogs />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </UserProvider>
     </BrowserRouter>
-    {/* <App /> */}
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

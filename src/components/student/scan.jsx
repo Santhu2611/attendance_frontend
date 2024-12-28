@@ -4,6 +4,8 @@ import QRScanner from "react-qr-scanner";
 import * as faceapi from "face-api.js";
 import { BASE_URL } from "../../config";
 import { ClipLoader } from "react-spinners"; // Import a spinner component
+import { getDownloadURL, ref, uploadBytes, uploadString } from "firebase/storage";
+import { storage } from "../../firebase";
 
 const FaceComparison = () => {
   const webcamRef = useRef(null);
@@ -13,6 +15,9 @@ const FaceComparison = () => {
   const [showQRScanner, setShowQRScanner] = useState(false);
   const [qrResult, setQrResult] = useState("");
   const [loading, setLoading] = useState(true); // Add loading state
+  const [attendanceRecorded, setAttendanceRecorded] = useState(false); // Add state to control visibility
+  const [capturedImage, setCapturedImage] = useState(null); // Add state to store captured image
+  const [processingQR, setProcessingQR] = useState(false); // Add state for QR processing
   const studentId = localStorage.getItem("id");
 
   const loadModels = async () => {
@@ -93,6 +98,7 @@ const FaceComparison = () => {
           .withFaceLandmarks()
           .withFaceDescriptor();
         console.log("Face detected in captured image.");
+
         if (detections) {
           const distance = faceapi.euclideanDistance(
             studentFaceDescriptor,
@@ -103,7 +109,22 @@ const FaceComparison = () => {
           if (distance < similarityThreshold) {
             setMatchResult("Faces Match!");
             setShowQRScanner(true); // Show QR scanner
+            setCapturedImage(capturedImage); // Store the captured image
             console.log("Faces match. Showing QR scanner.");
+
+            const storageRef = ref(storage, `attendance-management/images/${Date.now()}.jpg`);
+            console.log("Uploading captured image to Firebase...");
+
+            try {
+              await uploadBytes(storageRef, capturedImage, "data_url");
+              const url = await getDownloadURL(storageRef);
+              console.log("Image uploaded successfully. URL:", url);
+
+              // Set the captured image URL for use in the attendance API
+              setCapturedImage(url);
+            } catch (error) {
+              console.error("Error uploading image to Firebase:", error);
+            }
           } else {
             setMatchResult("Faces Do Not Match!");
             setShowQRScanner(false);
@@ -120,12 +141,15 @@ const FaceComparison = () => {
 
   const handleScan = (data) => {
     if (data) {
+       // Set processing state to true
       setQrResult(data.text);
       console.log("QR Code Data:", data.text);
       if (data.text === studentId) {
+        setProcessingQR(true);
         markAttendance();
       } else {
         alert("QR code does not match student ID.");
+        setProcessingQR(false); // Reset processing state
       }
     }
   };
@@ -146,18 +170,23 @@ const FaceComparison = () => {
           date: new Date().toISOString(),
           status: "Present",
           remarks: "Verified by QR code",
+          pic: capturedImage, // Include the captured image in the request
         }),
       });
 
       const result = await response.json();
       if (response.ok) {
-        alert("Attendance recorded successfully.");
+        alert(result.message || "Attendance recorded successfully.");
+        setAttendanceRecorded(true); // Set attendance recorded state to true
+        setShowQRScanner(false); // Hide QR scanner
       } else {
         alert(`Failed to record attendance: ${result.message}`);
       }
     } catch (error) {
       console.error("Error recording attendance:", error);
       alert("Error recording attendance.");
+    } finally {
+      setProcessingQR(false); // Reset processing state
     }
   };
 
@@ -177,60 +206,75 @@ const FaceComparison = () => {
         <ClipLoader size={50} color={"#EF4444"} loading={loading} />
       ) : (
         <>
-          {!showQRScanner && (
-            <div className="flex space-x-6">
-              <div>
-                {studentImage && (
-                  <img
-                    src={studentImage}
-                    alt="Student"
-                    className="mt-4 w-48 h-48 object-cover rounded-lg"
-                  />
-                )}
-              </div>
+          {!attendanceRecorded && (
+            <>
+              {!showQRScanner && (
+                <div className="flex space-x-6">
+                  <div>
+                    {studentImage && (
+                      <img
+                        src={studentImage}
+                        alt="Student"
+                        className="mt-4 w-48 h-48 object-cover rounded-lg"
+                      />
+                    )}
+                  </div>
 
-              <div>
-                <Webcam
-                  audio={false}
-                  ref={webcamRef}
-                  screenshotFormat="image/jpeg"
-                  className="w-48 h-48 object-cover rounded-lg"
-                />
-                <button
-                  onClick={handleCaptureAndCompare}
-                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">
-                  Capture & Compare
-                </button>
-              </div>
-            </div>
-          )}
+                  <div>
+                    <Webcam
+                      audio={false}
+                      ref={webcamRef}
+                      screenshotFormat="image/jpeg"
+                      className="w-48 h-48 object-cover rounded-lg"
+                    />
+                    <button
+                      onClick={handleCaptureAndCompare}
+                      className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">
+                      Capture & Compare
+                    </button>
+                  </div>
+                </div>
+              )}
 
-          {/* Match Result */}
-          {matchResult && (
-            <p
-              className={`mt-6 text-xl font-semibold ${
-                showQRScanner ? "text-green-500" : "text-red-500"
-              }`}>
-              {matchResult}
-            </p>
-          )}
-
-          {/* QR Scanner Section */}
-          {showQRScanner && (
-            <div className="mt-8">
-              <h2 className="text-xl font-semibold">QR Scanner</h2>
-              <QRScanner
-                delay={300}
-                style={{ width: "300px", height: "300px" }}
-                onScan={handleScan}
-                onError={handleError}
-              />
-              {qrResult && (
-                <p className="mt-4 text-lg text-green-600">
-                  QR Code Data: {qrResult}
+              {/* Match Result */}
+              {matchResult && (
+                <p
+                  className={`mt-6 text-xl font-semibold ${
+                    showQRScanner ? "text-green-500" : "text-red-500"
+                  }`}>
+                  {matchResult}
                 </p>
               )}
-            </div>
+
+              {/* QR Scanner Section */}
+              {showQRScanner && (
+                <div className="mt-8">
+                  <h2 className="text-xl font-semibold">QR Scanner</h2>
+                  <QRScanner
+                    delay={300}
+                    style={{ width: "300px", height: "300px" }}
+                    onScan={handleScan}
+                    onError={handleError}
+                  />
+                </div>
+              )}
+
+              {/* Processing QR Code */}
+              {processingQR && (
+                <div className="mt-8">
+                  <ClipLoader size={50} color={"#EF4444"} loading={processingQR} />
+                  <p className="mt-4 text-xl font-semibold text-gray-500">
+                    Processing QR Code...
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+
+          {attendanceRecorded && (
+            <p className="mt-6 text-xl font-semibold text-green-500">
+              Attendance recorded successfully.
+            </p>
           )}
         </>
       )}

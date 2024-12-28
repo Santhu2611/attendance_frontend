@@ -1,17 +1,26 @@
 // src/context/UserContext.js
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-    const [userRole, setUserRole] = useState(null); // Store user role
+    const [userRole, setUserRole] = useState(() => {
+        // Retrieve user role from localStorage (if any) on initialization
+        return localStorage.getItem("userRole") || null;
+    });
+
+    const setRole = (role) => {
+        setUserRole(role);
+        localStorage.setItem("userRole", role); // Persist in localStorage
+    };
 
     const logout = () => {
-        setUserRole(null); // Reset user role to null
+        setUserRole(null);
+        localStorage.removeItem("userRole"); // Clear user role on logout
     };
 
     return (
-        <UserContext.Provider value={{ userRole, setUserRole, logout }}>
+        <UserContext.Provider value={{ userRole, setUserRole: setRole, logout }}>
             {children}
         </UserContext.Provider>
     );

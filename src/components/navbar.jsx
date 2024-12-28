@@ -87,7 +87,7 @@ const Navbar = () => {
                 </li>
                 <li>
                   <button
-                    onClick={() => navigate("/attendance-logs")}
+                    onClick={() => navigate("/staff-attendance-logs")}
                     className="text-gray-700 hover:text-red-500 transition-all">
                     Attendance Logs
                   </button>
@@ -98,7 +98,7 @@ const Navbar = () => {
               <>
                 <li>
                   <button
-                    onClick={() => navigate("/attendance-logs")}
+                    onClick={() => navigate("/student-attendance-logs")}
                     className="text-gray-700 hover:text-red-500 transition-all">
                     Attendance Logs
                   </button>
