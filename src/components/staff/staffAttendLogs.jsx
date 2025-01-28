@@ -22,13 +22,17 @@ const StaffAttendanceLogs = () => {
     }, []);
 
     const formatDate = (dateString) => {
+        if (!dateString) return "Did not attend";
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        const date = new Date(dateString);
+        return isNaN(date) ? "Did not attend" : date.toLocaleDateString(undefined, options);
     };
     
     const formatTime = (dateString) => {
+        if (!dateString) return "Did not attend";
         const options = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        return new Date(dateString).toLocaleTimeString(undefined, options);
+        const date = new Date(dateString);
+        return isNaN(date) ? "Did not attend" : date.toLocaleTimeString(undefined, options);
     };
 
     return (
@@ -48,7 +52,7 @@ const StaffAttendanceLogs = () => {
                                 <th className="border border-gray-300 px-4 py-2">Department</th>
                                 <th className="border border-gray-300 px-4 py-2">Present Date</th>
                                 <th className="border border-gray-300 px-4 py-2">Attendance Time</th>
-                                {/* <th className="border border-gray-300 px-4 py-2">Attendance Pic</th> */}
+                                <th className="border border-gray-300 px-4 py-2">Attendance Pic</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,11 +61,13 @@ const StaffAttendanceLogs = () => {
                                     <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
                                     <td className="border border-gray-300 px-4 py-2">{attend.name}</td>
                                     <td className="border border-gray-300 px-4 py-2">{attend.department}</td>
-                                    <td className="border border-gray-300 px-4 py-2">{formatDate(attend.attendance[index].date)}</td>
-                                    <td className="border border-gray-300 px-4 py-2">{formatTime(attend.attendance[index].date)}</td>
-                                    {/* <td className="border border-gray-300 px-4 py-2">
-                                        <img src={attend.attendance[index].pic} alt="Attendance Pic" className="w-16 h-16 object-cover mx-auto" />
-                                    </td> */}
+                                    <td className="border border-gray-300 px-4 py-2">{formatDate(attend?.attendance[index]?.date)}
+
+                                    </td>
+                                    <td className="border border-gray-300 px-4 py-2">{formatTime(attend?.attendance[index]?.date)}</td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        <img src={attend?.attendance[index]?.pic} alt="Attendance Pic" className="w-16 h-16 object-cover mx-auto" />
+                                    </td> 
                                 </tr>
                             ))}
                         </tbody>

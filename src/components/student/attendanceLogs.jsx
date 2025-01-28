@@ -60,6 +60,7 @@ const StudentAttendanceLogs = () => {
                                 <th className="border border-gray-300 px-4 py-2">Department</th>
                                 <th className="border border-gray-300 px-4 py-2">Present Date</th>
                                 <th className="border border-gray-300 px-4 py-2">Attendance Time</th>
+                                <th className="border border-gray-300 px-4 py-2">Pic</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -72,6 +73,7 @@ const StudentAttendanceLogs = () => {
                                     <td className="border border-gray-300 px-4 py-2">{student.department}</td>
                                     <td className="border border-gray-300 px-4 py-2">{formatDate(attend.date)}</td>
                                     <td className="border border-gray-300 px-4 py-2">{formatTime(attend.date)}</td>
+                                    <td className="border border-gray-300 px-4 py-2 "><img src={attend?.pic} alt="pic" className="mx-auto h-20" /></td>
                                 </tr>
                             ))}
                         </tbody>

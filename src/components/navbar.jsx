@@ -114,7 +114,7 @@ const Navbar = () => {
             )}
           </ul>
         )}
-        {userRole === "student" && ( 
+        {userRole === "staff" && ( 
           <button
           onClick={() => navigate("/scan")}
           className="flex items-center justify-center space-x-2 text-bold text-white bg-red-500 hover:bg-red-600 px-6 py-5 h-full transition-all">

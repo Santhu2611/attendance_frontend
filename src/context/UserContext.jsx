@@ -5,18 +5,17 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [userRole, setUserRole] = useState(() => {
-        // Retrieve user role from localStorage (if any) on initialization
         return localStorage.getItem("userRole") || null;
     });
 
     const setRole = (role) => {
         setUserRole(role);
-        localStorage.setItem("userRole", role); // Persist in localStorage
+        localStorage.setItem("userRole", role);
     };
 
     const logout = () => {
         setUserRole(null);
-        localStorage.removeItem("userRole"); // Clear user role on logout
+        localStorage.removeItem("userRole");
     };
 
     return (

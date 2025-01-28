@@ -7,7 +7,7 @@ import Home from "./components/home";
 import Navbar from "./components/navbar";
 import Login from "./components/login";
 import Registration from "./components/register";
-import FaceComparison from "./components/student/scan";
+import FaceComparison from "./components/staff/scan";
 import { UserProvider } from "./context/UserContext";
 import StudentActivations from "./components/staff/studApproval";
 import StudentDetails from "./components/staff/studDetails";
