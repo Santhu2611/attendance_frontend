@@ -38,7 +38,6 @@ const Registration = () => {
     }
   };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -135,6 +134,8 @@ const Registration = () => {
               <option value="CSE">Computer Science Engineering</option>
               <option value="IT">Information Technology</option>
               <option value="ME">Mechanical Engineering</option>
+              <option value="CE">Civil Engineering</option>
+              <option value="EE">Electrical Engineering</option>
             </select>
           </div>
 

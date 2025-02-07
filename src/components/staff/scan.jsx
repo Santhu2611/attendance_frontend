@@ -25,12 +25,19 @@ const FaceComparison = () => {
       // Fetch student data (which includes the image URL)
       const response = await fetch(`${BASE_URL}/students/${studentId}`);
 
-      if(!response.ok) {
+      if (!response.ok) {
         alert("Student not found.");
         return;
       }
 
       const data = await response.json();
+
+      if (data.student === null) {
+        alert("Student not found.");
+        setShowQRScanner(true);
+        return;
+      }
+
       console.log("Student data fetched successfully.");
       setStoredImageUrl(data.student.photo);
 
@@ -57,14 +64,19 @@ const FaceComparison = () => {
       return;
     }
 
-    const storageRef = ref(storage, `attendance-management/images/${Date.now()}.jpg`);
+    const storageRef = ref(
+      storage,
+      `attendance-management/images/${Date.now()}.jpg`
+    );
     console.log("Uploading captured image to Firebase...");
+
+    setLoading(true); // Set loading state to true
 
     try {
       // Convert Base64 to Blob and upload
       const base64ToBlob = (base64Data) => {
-        const byteString = atob(base64Data.split(',')[1]);
-        const mimeString = base64Data.split(',')[0].split(':')[1].split(';')[0];
+        const byteString = atob(base64Data.split(",")[1]);
+        const mimeString = base64Data.split(",")[0].split(":")[1].split(";")[0];
         const arrayBuffer = new ArrayBuffer(byteString.length);
         const uint8Array = new Uint8Array(arrayBuffer);
 
@@ -97,6 +109,7 @@ const FaceComparison = () => {
       });
 
       const result = await response.json();
+      setLoading(false); // Set loading state to false
       if (result.success) {
         setMatchResult("Faces Match!");
         console.log("Faces match.");
@@ -108,6 +121,8 @@ const FaceComparison = () => {
       }
     } catch (error) {
       console.error("Error during face comparison:", error);
+      alert("Error comparing faces.");
+      setLoading(false); // Set loading state to false
     }
   };
 
@@ -120,8 +135,8 @@ const FaceComparison = () => {
         setStudentId1(data.text);
         setShowQRScanner(false); // Hide QR scanner after successful scan
         await fetchStudentImage(data.text);
-         // Reset processing state
-         setProcessingQR(false);
+        // Reset processing state
+        setProcessingQR(false);
       } else {
         alert("QR code does not match student ID.");
         setProcessingQR(false); // Reset processing state
@@ -153,11 +168,10 @@ const FaceComparison = () => {
       if (response.status === 200) {
         alert(result.message || "Attendance recorded successfully.");
         setAttendanceRecorded(true); // Set attendance recorded state to true
-      } else if(response.status === 400) {
+      } else if (response.status === 400) {
         alert(`${result.message}`);
         setAttendanceRecorded(true);
-      }
-      else {
+      } else {
         alert("Failed to record attendance.");
       }
     } catch (error) {
@@ -187,7 +201,12 @@ const FaceComparison = () => {
       </h1>
 
       {loading ? (
-        <ClipLoader size={50} color={"#EF4444"} loading={loading} />
+        <>
+          <ClipLoader size={50} color={"#EF4444"} loading={loading} />
+          <p className="mt-4 text-xl font-semibold text-gray-500">
+            Processing image...
+          </p>
+        </>
       ) : (
         <>
           {!attendanceRecorded && (
@@ -236,7 +255,9 @@ const FaceComparison = () => {
               {matchResult && (
                 <p
                   className={`mt-6 text-xl font-semibold ${
-                    matchResult === "Faces Match!" ? "text-green-500" : "text-red-500"
+                    matchResult === "Faces Match!"
+                      ? "text-green-500"
+                      : "text-red-500"
                   }`}>
                   {matchResult}
                 </p>
@@ -245,7 +266,11 @@ const FaceComparison = () => {
               {/* Processing QR Code */}
               {processingQR && (
                 <div className="mt-8">
-                  <ClipLoader size={50} color={"#EF4444"} loading={processingQR} />
+                  <ClipLoader
+                    size={50}
+                    color={"#EF4444"}
+                    loading={processingQR}
+                  />
                   <p className="mt-4 text-xl font-semibold text-gray-500">
                     Processing QR Code...
                   </p>

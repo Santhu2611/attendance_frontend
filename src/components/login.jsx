@@ -14,34 +14,34 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const getUrl = () => {
-    if(role === "staff") {
+    if (role === "staff") {
       return `${BASE_URL}/hod/login`;
-    } else if(role === "student") {
+    } else if (role === "student") {
       return `${BASE_URL}/students/login`;
-    }
-    else {
+    } else {
       return `${BASE_URL}/admin/login`;
     }
   };
 
   const returnTitle = () => {
-    if(role === "staff") {
+    if (role === "staff") {
       return "Staff Login";
-    } else if(role === "student") {
+    } else if (role === "student") {
       return "Student Login";
-    }
-    else {
+    } else {
       return "Admin Login";
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const url = getUrl();
-      
+
     const data =
-      role !== "student" ? { email: name, password } : { pinno: name, password };
+      role !== "student"
+        ? { email: name, password }
+        : { pinno: name, password };
 
     try {
       const response = await fetch(url, {
@@ -61,9 +61,10 @@ const Login = () => {
       // Set role in context and navigate to home
 
       if (role === "staff") {
+        localStorage.setItem("staffEmail", result.hod.email);
         setUserRole(role);
         navigate("/");
-      } else if(role === "student") {
+      } else if (role === "student") {
         if (result.student.isVerified) {
           localStorage.setItem("id", result.student._id);
           setUserRole(role);
@@ -72,8 +73,7 @@ const Login = () => {
         } else {
           alert("Please wait for the admin to verify your account");
         }
-      }
-      else {
+      } else {
         setUserRole(role);
         navigate("/");
       }
