@@ -32,6 +32,13 @@ const Navbar = () => {
             </li>
             <li>
               <button
+                onClick={() => navigate("/login", { state: { role: "admin" } })}
+                className="text-gray-700 hover:text-red-500 transition-all">
+                Admin
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={() => navigate("/login", { state: { role: "staff" } })}
                 className="text-gray-700 hover:text-red-500 transition-all">
                 Staff
@@ -62,15 +69,17 @@ const Navbar = () => {
                 Home
               </button>
             </li>
+            {userRole === "admin" && (
+              <li>
+              <button
+                onClick={() => navigate("/students-approval")}
+                className="text-gray-700 hover:text-red-500 transition-all">
+                Students Approval
+              </button>
+            </li>
+            )}
             {userRole === "staff" && (
               <>
-                <li>
-                  <button
-                    onClick={() => navigate("/students-approval")}
-                    className="text-gray-700 hover:text-red-500 transition-all">
-                    Students Approval
-                  </button>
-                </li>
                 <li>
                   <button
                     onClick={() => navigate("/students-details")}

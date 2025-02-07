@@ -8,7 +8,7 @@ const StudentDetails = () => {
         try {
             const response = await fetch(`${BASE_URL}/students`);
             const data = await response.json();
-            const verifiedStudents = data.filter((student) => student.isVerified);
+            const verifiedStudents = data.students.filter((student) => student.isVerified);
             setStudents(verifiedStudents);
         } catch (error) {
             console.error("Error fetching student data:", error);

@@ -8,7 +8,7 @@ const StudentActivations = () => {
         try {
             const response = await fetch(`${BASE_URL}/students`);
             const data = await response.json();
-            const unverifiedStudents = data.filter((student) => !student.isVerified);
+            const unverifiedStudents = data.students.filter((student) => !student.isVerified);
             setStudents(unverifiedStudents);
         } catch (error) {
             console.error("Error fetching student data:", error);

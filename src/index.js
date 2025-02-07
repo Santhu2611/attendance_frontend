@@ -9,7 +9,7 @@ import Login from "./components/login";
 import Registration from "./components/register";
 import FaceComparison from "./components/staff/scan";
 import { UserProvider } from "./context/UserContext";
-import StudentActivations from "./components/staff/studApproval";
+import StudentActivations from "./components/admin/studApproval";
 import StudentDetails from "./components/staff/studDetails";
 import CheckAttendance from "./components/staff/checkAttendance";
 import StudentIDCard from "./components/student/idCard";

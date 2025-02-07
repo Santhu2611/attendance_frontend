@@ -13,13 +13,35 @@ const Login = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
+  const getUrl = () => {
+    if(role === "staff") {
+      return `${BASE_URL}/hod/login`;
+    } else if(role === "student") {
+      return `${BASE_URL}/students/login`;
+    }
+    else {
+      return `${BASE_URL}/admin/login`;
+    }
+  };
+
+  const returnTitle = () => {
+    if(role === "staff") {
+      return "Staff Login";
+    } else if(role === "student") {
+      return "Student Login";
+    }
+    else {
+      return "Admin Login";
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const url =
-      role === "staff" ? `${BASE_URL}/hod/login` : `${BASE_URL}/students/login`;
+    
+    const url = getUrl();
+      
     const data =
-      role === "staff" ? { email: name, password } : { pinno: name, password };
+      role !== "student" ? { email: name, password } : { pinno: name, password };
 
     try {
       const response = await fetch(url, {
@@ -41,15 +63,19 @@ const Login = () => {
       if (role === "staff") {
         setUserRole(role);
         navigate("/");
-      } else {
+      } else if(role === "student") {
         if (result.student.isVerified) {
           localStorage.setItem("id", result.student._id);
           setUserRole(role);
           alert(result.message);
           navigate("/");
         } else {
-          alert("Please wait for the staff to verify your account");
+          alert("Please wait for the admin to verify your account");
         }
+      }
+      else {
+        setUserRole(role);
+        navigate("/");
       }
 
       setName("");
@@ -62,7 +88,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-50">
       <div className="w-full bg-red-400 text-white text-center py-6 text-4xl font-bold">
-        {role === "staff" ? "Staff Login" : "Student Login"}
+        {returnTitle()}
       </div>
 
       <div className="mt-8 bg-white rounded-lg shadow-md p-8 w-full max-w-md">
