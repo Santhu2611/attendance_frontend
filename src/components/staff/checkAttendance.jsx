@@ -70,14 +70,21 @@ const CheckAttendance = () => {
 
   const handleGetCSV = async () => {
     try {
+      console.log(selectedStudent)
       const email = localStorage.getItem("staffEmail");
+      const studentData = await fetch(`${BASE_URL}/students/${selectedStudent}`);
+
+      const stu = await studentData.json();
+
+      console.log(stu.student)
+
       const body =
         attendanceType === "student"
           ? {
               studentId: selectedStudent,
               startDate,
               endDate,
-              staffEmail: email,
+              staffEmail: stu.student.parentEmail,
             }
           : {
               department: selectedBranch,
@@ -85,7 +92,6 @@ const CheckAttendance = () => {
               endDate,
               staffEmail: email,
             };
-
       const url =
         attendanceType === "student"
           ? `${BASE_URL}/sendattendance`
@@ -275,7 +281,7 @@ const CheckAttendance = () => {
             {attendanceType === "student" ? "Student" : "Branch"})
           </h1>
           <button
-            onClick={handleGetCSV}
+            onClick={async () => await handleGetCSV()}
             className="mb-4 px-4 py-2 border border-red-400 text-red-400 rounded hover:bg-red-400 hover:text-white">
             Get CSV through Mail
           </button>

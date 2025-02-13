@@ -101,14 +101,14 @@ const Login = () => {
             <label
               htmlFor="name"
               className="block text-gray-700 font-medium mb-1">
-              {role === "staff" ? "Email" : "Roll Number"}
+              {role !== "student" ? "Email" : "Roll Number"}
             </label>
             <input
               id="name"
               type="text"
               required
               placeholder={`Enter your ${
-                role === "staff" ? "email" : "roll number"
+                role !== "student" ? "email" : "roll number"
               }`}
               value={name}
               onChange={(e) => setName(e.target.value)}

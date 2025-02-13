@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../../config";
 
 const StudentActivations = () => {
   const [students, setStudents] = useState([]);
+  const hasFetched = useRef(false);
 
   const fetchStudents = async () => {
     try {
@@ -18,7 +19,10 @@ const StudentActivations = () => {
   };
 
   useEffect(() => {
-    fetchStudents();
+    if (!hasFetched.current) {  // ✅ Runs only on first render
+      fetchStudents();
+      hasFetched.current = true;
+    }
   }, []);
 
   const handleApprove = async (id) => {

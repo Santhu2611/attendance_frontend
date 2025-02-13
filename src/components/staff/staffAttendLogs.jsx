@@ -52,7 +52,7 @@ const StaffAttendanceLogs = () => {
                                 <th className="border border-gray-300 px-4 py-2">Department</th>
                                 <th className="border border-gray-300 px-4 py-2">Present Date</th>
                                 <th className="border border-gray-300 px-4 py-2">Attendance Time</th>
-                                <th className="border border-gray-300 px-4 py-2">Attendance Pic</th>
+                                {/* <th className="border border-gray-300 px-4 py-2">Attendance Pic</00.th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -65,9 +65,9 @@ const StaffAttendanceLogs = () => {
 
                                     </td>
                                     <td className="border border-gray-300 px-4 py-2">{formatTime(attend?.attendance[index]?.date)}</td>
-                                    <td className="border border-gray-300 px-4 py-2">
+                                    {/* <td className="border border-gray-300 px-4 py-2">
                                         <img src={attend?.attendance[index]?.pic} alt="Attendance Pic" className="w-16 h-16 object-cover mx-auto" />
-                                    </td> 
+                                    </td>  */}
                                 </tr>
                             ))}
                         </tbody>

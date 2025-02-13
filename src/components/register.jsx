@@ -11,6 +11,7 @@ const Registration = () => {
     photo: null,
     name: "",
     emailid: "",
+    parentEmail:"",
     studentmobile: "",
     address: "",
     password: "",
@@ -45,7 +46,12 @@ const Registration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    
+
+    if(formData.parentEmail === formData.emailid){
+      return alert("Parent Email and student Email could not be same");
+    }
+
     //hit this api "/register/students" with formData
     const response = await fetch(`${BASE_URL}/register/students`, {
       method: "POST",
@@ -181,7 +187,7 @@ const Registration = () => {
             <label
               htmlFor="email"
               className="block text-gray-700 font-medium mb-1">
-              Email
+              Student Email
             </label>
             <input
               type="email"
@@ -192,6 +198,24 @@ const Registration = () => {
               className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
               required
               placeholder="Enter your email"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="parentEmail"
+              className="block text-gray-700 font-medium mb-1">
+              Parent Email
+            </label>
+            <input
+              type="email"
+              id="parentEmail"
+              name="parentEmail"
+              value={formData.parentEmail}
+              onChange={handleChange}
+              className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
+              required
+              placeholder="Enter your parent email"
             />
           </div>
 
