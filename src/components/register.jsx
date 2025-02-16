@@ -10,7 +10,7 @@ const Registration = () => {
     department: "",
     photo: null,
     name: "",
-    emailid: "",
+    email: "",
     parentEmail:"",
     studentmobile: "",
     address: "",
@@ -46,9 +46,12 @@ const Registration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@gvpce\.ac\.in$/;
+  if (!emailPattern.test(formData.email)) {
+    return alert("Student Email must be a domain email (example@gvpce.ac.in)");
+  }
 
-    if(formData.parentEmail === formData.emailid){
+    if(formData.parentEmail === formData.email){
       return alert("Parent Email and student Email could not be same");
     }
 
@@ -142,6 +145,7 @@ const Registration = () => {
               <option value="ME">Mechanical Engineering</option>
               <option value="CE">Civil Engineering</option>
               <option value="EE">Electrical Engineering</option>
+              <option value="MCA">Master of Computer Applications</option>
             </select>
           </div>
 
@@ -192,8 +196,8 @@ const Registration = () => {
             <input
               type="email"
               id="email"
-              name="emailid"
-              value={formData.emailid}
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
               required

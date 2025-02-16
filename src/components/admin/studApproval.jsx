@@ -107,7 +107,7 @@ const StudentActivations = () => {
                     {student.department}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {student.emailid}
+                    {student.email}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {student.studentmobile}

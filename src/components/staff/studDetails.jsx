@@ -55,7 +55,7 @@ const StudentDetails = () => {
                                     <td className="border border-gray-300 px-4 py-2">{student.pinno}</td>
                                     <td className="border border-gray-300 px-4 py-2">{student.year}</td>
                                     <td className="border border-gray-300 px-4 py-2">{student.department}</td>
-                                    <td className="border border-gray-300 px-4 py-2">{student.emailid}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{student.email}</td>
                                     <td className="border border-gray-300 px-4 py-2">{student.studentmobile}</td>
                                     <td className="border border-gray-300 px-4 py-2">{formatDate(student.createdAt)}</td>
                                     <td className="border border-gray-300 px-4 py-2">{formatDate(student.lastlogged)}</td>

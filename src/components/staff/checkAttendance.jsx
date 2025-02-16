@@ -4,14 +4,17 @@ import { FaArrowLeft } from "react-icons/fa";
 
 const CheckAttendance = () => {
   const [students, setStudents] = useState([]);
-  const [branches, setBranches] = useState(["ECE", "CSE", "IT", "ME", "EE"]); // Example branches
+  const [branches, setBranches] = useState(["ECE", "CSE", "IT", "ME", "EE","MCA"]); // Example branches
+  const [percentage , setPercentage] = useState(0);
   const [selectedStudent, setSelectedStudent] = useState("");
   const [selectedBranch, setSelectedBranch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [attendanceData, setAttendanceData] = useState([]);
   const [studentDetails, setStudentDetails] = useState(null);
-  const [attendanceType, setAttendanceType] = useState(null); // "student" or "branch"
+  const [attendanceType, setAttendanceType] = useState(null);
+  const [attended,setAttended] = useState(0);
+  const [total,setTotal] = useState(0);
 
   useEffect(() => {
     fetchStudents();
@@ -42,6 +45,9 @@ const CheckAttendance = () => {
       );
       const data = await response.json();
       setAttendanceData(data.response || []);
+      setPercentage(data.attendancePercentage);
+      setAttended(data.attendedClasses);
+      setTotal(data.totalClasses);
       const student = students.find(
         (student) => student._id === selectedStudent
       );
@@ -285,6 +291,12 @@ const CheckAttendance = () => {
             className="mb-4 px-4 py-2 border border-red-400 text-red-400 rounded hover:bg-red-400 hover:text-white">
             Get CSV through Mail
           </button>
+           {attendanceType === "student" && (
+            <>
+            <p className="font-semibold">Attended Classes : {attended} / {total} </p>
+            <p className="font-semibold">Attendance Percentage : {percentage} %</p>
+            </>
+           )}
 
           <div className="max-h-64 overflow-y-auto custom-scrollbar">
             <table className="min-w-full bg-white border">

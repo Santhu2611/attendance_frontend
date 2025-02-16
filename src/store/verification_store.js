@@ -9,7 +9,7 @@ class VerificationStore {
       async sendOtpStudent(email){
         const url = "/forgotPasswordStudent"
         const body ={
-            emailid: email,
+            email: email,
         }
         const response = await apiPostPut(body,url,"POST");
         if(response.status===200){
