@@ -46,16 +46,33 @@ const Registration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     const emailPattern = /^[a-zA-Z0-9._%+-]+@gvpce\.ac\.in$/;
-  if (!emailPattern.test(formData.email)) {
-    return alert("Student Email must be a domain email (example@gvpce.ac.in)");
-  }
-
-    if(formData.parentEmail === formData.email){
-      return alert("Parent Email and student Email could not be same");
+    const parentEmailPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|icloud\.com)$/;
+    const mobilePattern = /^[6-9]\d{9}$/;
+    const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  
+    if (!emailPattern.test(formData.email)) {
+      return alert("Student Email must be a domain email (example@gvpce.ac.in)");
     }
-
-    //hit this api "/register/students" with formData
+  
+    if (!parentEmailPattern.test(formData.parentEmail)) {
+      return alert("Parent Email must be a valid email (e.g., @gmail.com, @yahoo.com)");
+    }
+  
+    if (formData.parentEmail === formData.email) {
+      return alert("Parent Email and Student Email cannot be the same");
+    }
+  
+    if (!mobilePattern.test(formData.studentmobile)) {
+      return alert("Mobile number must be 10 digits and start with a number greater than 5");
+    }
+  
+    if (!passwordPattern.test(formData.password)) {
+      return alert("Password must start with a capital letter, contain at least one special character, one digit, and be at least 8 characters long");
+    }
+  
+    // Hit this API "/register/students" with formData
     const response = await fetch(`${BASE_URL}/register/students`, {
       method: "POST",
       headers: {
@@ -63,9 +80,10 @@ const Registration = () => {
       },
       body: JSON.stringify(formData),
     });
+  
     const data = await response.json();
+    
     if (response.ok) {
-      //alert the message coming in response
       alert(data.message || "Registration successful!");
       navigate("/login", { state: { role: "student" } });
     } else {
@@ -235,7 +253,13 @@ const Registration = () => {
               id="mobile"
               name="studentmobile"
               value={formData.studentmobile}
-              onChange={handleChange}
+              maxLength={10}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value)) {  // Only allows digits (0-9)
+                  handleChange(e);
+                }
+              }}
               className="w-full border-2 border-red-400 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
               required
               placeholder="Enter your mobile number"
